@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>SAF Sustainability Score Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Sustainable Aviation Fuel (SAF) Score Calculator</h1>
+    <div class="container">
+        <form id="safForm">
+            <h3>Input Fuel Parameters</h3>
+            <!-- Input fields for each parameter -->
+            <label for="energy_density">Energy Density (MJ/L): <span>(Range: 0 - 35)</span></label>
+            <input type="number" id="energy_density" step="0.1" required>
+
+            <label for="cetane_number">Cetane Number: <span>(Range: 40 - 60)</span></label>
+            <input type="number" id="cetane_number" step="0.1" required>
+
+            <label for="octane_number">Octane Number: <span>(Range: 85 - 100)</span></label>
+            <input type="number" id="octane_number" step="0.1" required>
+
+            <label for="flash_point">Flash Point (°C): <span>(Range: 40 - 60)</span></label>
+            <input type="number" id="flash_point" step="0.1" required>
+
+            <label for="viscosity">Viscosity (mm²/s): <span>(Range: 1 - 4)</span></label>
+            <input type="number" id="viscosity" step="0.1" required>
+
+            <label for="sulfur_content">Sulfur Content (ppm): <span>(Range: 0 - 10)</span></label>
+            <input type="number" id="sulfur_content" step="0.1" required>
+
+            <label for="thermal_efficiency">Thermal Efficiency (%): <span>(Range: 25 - 35)</span></label>
+            <input type="number" id="thermal_efficiency" step="0.1" required>
+
+            <label for="carbon_intensity">Carbon Intensity (gCO₂e/MJ): <span>(Range: 20 - 50)</span></label>
+            <input type="number" id="carbon_intensity" step="0.1" required>
+
+            <label for="feedstock_sourcing">Feedstock Sourcing :<span>(Score 0-10)</span></label>
+            <input type="number" id="feedstock_sourcing" step="0.1" required>
+
+            <label for="water_usage">Water Usage (L/MJ): <span>(Range: 0 - 5)</span></label>
+            <input type="number" id="water_usage" step="0.1" required>
+
+            <label for="blending_ratio">Blending Ratio (%): <span>(Range: 0 - 50)</span></label>
+            <input type="number" id="blending_ratio" step="0.1" required>
+
+            <label for="carbon_footprint">Carbon Footprint (gCO₂e/km): <span>(Range: 0 - 80)</span></label>
+            <input type="number" id="carbon_footprint" step="0.1" required>
+
+            <label for="EROI">EROI (Ratio): <span>(Range: 0 - 10)</span></label>
+            <input type="number" id="EROI" step="0.1" required>
+
+            <label for="co2_emissions">CO₂ Emissions (g/km): <span>(Range: 0 - 100)</span></label>
+            <input type="number" id="co2_emissions" step="0.1" required>
+
+            <label for="nox_emissions">NOx Emissions (g/km): <span>(Range: 0 - 100)</span></label>
+            <input type="number" id="nox_emissions" step="0.1" required>
+
+            <label for="pm_emissions">PM Emissions (g/km): <span>(Range: 0 - 100)</span></label>
+            <input type="number" id="pm_emissions" step="0.1" required>
+
+            <label for="co_emissions">CO Emissions (g/km): <span>(Range: 0 - 100)</span></label>
+            <input type="number" id="co_emissions" step="0.1" required>
+
+            <label for="ch4_emissions">CH₄ Emissions (g/km): <span>(Range: 0 - 100)</span></label>
+            <input type="number" id="ch4_emissions" step="0.1" required>
+
+            <button type="button" onclick="calculateScore()">Calculate Sustainability Score</button>
+        </form>
+
+        <div id="scoreDisplay" style="display: none;">
+            <h3>Your Sustainability Score: <span id="sustainabilityScore"></span> / 10</h3>
+        </div>
+
+        <h3>Reference Standards for SAF Parameters</h3>
+        <p>The following standards provide benchmarks for evaluating the sustainability of SAF:</p>
+        <ul>
+            <li><strong>Carbon Intensity (CORSIA):</strong> Must achieve at least a 10% reduction in lifecycle GHG emissions compared to conventional jet fuel, targeting values below 89 gCO₂e/MJ, with optimal values between 20–40 gCO₂e/MJ.</li>
+            <li><strong>Energy Density (ASTM D7566):</strong> SAF should meet the standard energy density of conventional jet fuels, approximately 42.8 MJ/kg, with acceptable SAF values between 40–44 MJ/kg.</li>
+            <li><strong>Sulfur Content (ASTM D7566):</strong> SAF sulfur content should remain below 15 ppm to limit sulfur emissions and enhance environmental sustainability.</li>
+            <li><strong>Flash Point (ASTM D7566):</strong> Minimum flash point requirement is 38°C to ensure fuel safety and compatibility with aviation handling.</li>
+            <li><strong>NOx and CO Emissions:</strong> SAF should achieve a 15–25% reduction in NOx and CO emissions compared to conventional jet fuels.</li>
+            <li><strong>Energy Return on Investment (EROI):</strong> An EROI of at least 5:1 is ideal for sustainability, with conventional jet fuel around 10:1.</li>
+        </ul>
+
+        <div id="results" style="display:none;">
+            <!-- <h3>Sustainability Score: <span id="sustainabilityScore"></span> / 10</h3> -->
+            <h4>Parameter Weightage and Comparison</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>User Input</th>
+                        <th>Standard (CORSIA/ASTM)</th>
+                        <th>Weightage</th>
+                    </tr>
+                </thead>
+                <tbody id="comparisonTable">
+                    <!-- Comparison rows will be inserted here -->
+                </tbody>
+            </table>
+            <h3>Sustainability Score Breakdown</h3>
+            <div id="chart-container" style="width: 100%; height: 600px; display: flex; justify-content: center; align-items: center;">
+                <canvas id="normalizedScoreChart"></canvas>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
